@@ -11,6 +11,7 @@ CORS(app)
 def index():
     response = qs.ask_question(49, 'IRQ')
     print("BACK IN INDEX")
+    print("Adding new print")
     return response, 200
 
 
