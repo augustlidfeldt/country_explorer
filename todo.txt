@@ -1,0 +1,41 @@
+# General
+
+Rather limited good functionality than a lot bad
+
+# Structure
+
+Add to GitHub to get commits
+Make it possible to select multiple countries and see them next to eachother
+
+# Frontend
+
+Look up best visaliizers of frontend data?
+Add possibility to select multiple countries
+
+# Server
+
+Add flask_restful to code
+Look at React code from restaurant-tutorial to make good server API, structuring
+
+# SQL
+
+Look at best practices for making a SQL database
+Look at matching practices between database
+
+# Data
+
+Add data from Wikipedia to get more info on countries
+Add data from World Bank to get more info on countries
+
+# Deployment
+
+Containerize with Docker, upload to Docker hub and deploy with Kubernetes
+Deplay containers to AWS (create new aws free account)
+Exchange flask for Django?
+Look up NGINX
+
+# LATER
+
+Add react-hooks to remember state selection after user has looked closer on state
+Look up concurrency
+Look up CORS?
