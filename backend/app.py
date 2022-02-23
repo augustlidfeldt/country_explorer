@@ -12,6 +12,7 @@ def index():
     response = qs.ask_question(49, 'IRQ')
     print("BACK IN INDEX")
     print("Adding new print")
+    print("Testing some more")
     return response, 200
 
 
