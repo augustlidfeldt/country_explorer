@@ -1,6 +1,7 @@
 import question_server as qs
 from flask import Flask
 from flask_cors import CORS
+from flask import request
 import json
 from multiprocessing import connection
 import pandas as pd
@@ -12,10 +13,22 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/')
+@app.route('/question', methods=['GET', 'POST'])
 def index():
-    response = ask_question(26, 'JPN')
+    try:
+        print(request.args)
+        country = request.args.get('country')
+        print(country)
+        qid = int(request.args.get('qid'))
+        print(qid)
+        response = ask_question(qid, country)
+    except BaseException:
+        country = 'IRQ'
+        qid = 2
+        response = ask_question(qid, country)
+
     print("BACK IN INDEX")
+    print(response)
     return response, 200
 
 

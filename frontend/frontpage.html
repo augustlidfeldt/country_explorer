@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Page Title</title>
+    <title>Country Explorer</title>
     <link rel="stylesheet" href="style.css">
   </head>
   
@@ -12,6 +12,19 @@
         <thead></thead>
         <tbody></tbody>
     </table>
+    <form id="inputForm">
+      <select id="country" name="country">
+        <option value="IRQ">Iraq</option>
+        <option value="JPN">Japan</option>
+        <option value="US">United States</option>
+        </select>
+      <label for="qid" id="qid_label">Question number:</label>
+      <input type="text" id="qid" name="qid"><br><br>
+      <input type="submit" value="Fetch">
+    </form>
+
+    </form>
+
     <script src="table_loader.js"></script>
   </body>
 </html>
