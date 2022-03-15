@@ -114,3 +114,20 @@ def ask_question(question_nr, country_alpha):
     response = str(response).replace("'", '"')
     print(type(response))
     return str(response)
+
+
+def print_country_data(question_nr, country_alpha):
+    select_question_answers = f"""
+        SELECT "Q{question_nr}", COUNT("Q{question_nr}") FROM QUESTIONS WHERE "B_COUNTRY_ALPHA" = '{country_alpha}' GROUP BY "Q{question_nr}" ORDER BY "Q{question_nr}"
+    """
+    query = f"""
+    SELECT f.country, wpc.gdp_per_cap, f.fertility as GDP FROM world_gdp_per_cap as wpc INNER JOIN world_fertility as f ON f.iso_code = wpc.iso_code WHERE f.iso_code='{country_alpha}'
+    """
+
+    connection = question_setup()
+    cursor = connection.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+
+    for r in results:
+        print(r)
