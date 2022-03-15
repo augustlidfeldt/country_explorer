@@ -16,7 +16,7 @@ async function loadIntoTable(inputURL, table, country, qid) {
     data = await response.json();
     console.log(data["headers"]);
     const { headers, rows } = data
-    console.log("Not broke after response");
+    console.log("Not broke  after response");
 
     console.log(headers)
     console.log("Came past Fetch")

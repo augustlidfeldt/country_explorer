@@ -2,11 +2,11 @@ import question_server as qs
 from flask import Flask
 from flask_cors import CORS
 from flask import request
-import json
-from multiprocessing import connection
 import pandas as pd
 import psycopg2
 from psycopg2 import OperationalError
+
+from multiprocessing import connection
 import json
 
 app = Flask(__name__)
@@ -60,7 +60,7 @@ def create_connection(db_name, db_user, db_password, db_host, db_port):
 def question_setup():
     global connection
     connection = create_connection(
-        "sm_app", "postgres", "", "127.0.0.1", "5432"
+        "country_app", "postgres", "", "127.0.0.1", "5432"
     )
     return connection
 
@@ -87,8 +87,8 @@ def ask_question(question_nr, country_alpha):
         sum += int(opt)
     freq = list(map(lambda a: round((a/sum), 4)*100, freq))
 
-    select_answers = f"""SELECT q,theme,subtheme,{cols[:-1]} FROM ANSWERS_2 WHERE "q" = '{question_nr}.0'"""
-    select_columns = """SELECT column_name, ordinal_position FROM information_schema.columns WHERE table_name = 'answers_2'"""
+    select_answers = f"""SELECT q,theme,subtheme,{cols[:-1]} FROM answers WHERE "q" = '{question_nr}.0'"""
+    select_columns = """SELECT column_name, ordinal_position FROM information_schema.columns WHERE table_name = 'answers'"""
 
     def get_selection(query):
         cursor = connection.cursor()
