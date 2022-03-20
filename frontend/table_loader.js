@@ -13,12 +13,13 @@ async function loadIntoTable(inputURL, table, country, qid) {
     const response = await fetch(url).then(response => { return response }).catch(e => console.log(e));
 
     console.log("The response");
+
+
     data = await response.json();
     console.log(data["headers"]);
     const { headers, rows } = data
-    console.log("Not broke  after response");
-
     console.log(headers)
+
     console.log("Came past Fetch")
     // Clear table data
     tableHead.innerHTML = "<tr></tr>";

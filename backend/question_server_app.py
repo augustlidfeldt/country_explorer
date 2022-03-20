@@ -15,17 +15,19 @@ CORS(app)
 
 @app.route('/question', methods=['GET', 'POST'])
 def index():
-    try:
-        print(request.args)
-        country = request.args.get('country')
-        print(country)
-        qid = int(request.args.get('qid'))
-        print(qid)
-        response = ask_question(qid, country)
-    except BaseException:
-        country = 'IRQ'
-        qid = 2
-        response = ask_question(qid, country)
+    # try:
+    print(request.args)
+    country = request.args.get('country')
+    print(country)
+    qid = int(request.args.get('qid'))
+    print(qid)
+    response = ask_question(qid, country)
+    country = [country]
+    country_data = print_country_data(country)
+    # except BaseException:
+    #    country = 'IRQ'
+    #    qid = 2
+    #    response = ask_question(qid, country)
 
     print("BACK IN INDEX")
     print(response)
@@ -101,7 +103,7 @@ def ask_question(question_nr, country_alpha):
     freq = list(map(lambda a: str(round(a, 4))+"%", freq))  # add percentages, but string
     data = [country_alpha, *list(question_details[0:3]), *freq, sum]
 
-    columns = [*["Country", "Question", "Theme", "Subtheme"], *question_details[3:], *['Answers']]
+    columns = [*["Country", "Question", "Theme", "Subtheme"], *question_details[3:], *["Answers"]]
     df = pd.DataFrame([data], columns=columns)
     if df["Subtheme"][0] == '0':
         print("No subtheme!!!")
@@ -111,23 +113,32 @@ def ask_question(question_nr, country_alpha):
 
     print("hello")
     response = {"headers": list(df.columns), "rows": list(df.iloc[0])}
-    response = str(response).replace("'", '"')
+    response = str(response).replace("'", '"').replace('n"t', "n't")
     print(type(response))
     return str(response)
 
 
-def print_country_data(question_nr, country_alpha):
-    select_question_answers = f"""
-        SELECT "Q{question_nr}", COUNT("Q{question_nr}") FROM QUESTIONS WHERE "B_COUNTRY_ALPHA" = '{country_alpha}' GROUP BY "Q{question_nr}" ORDER BY "Q{question_nr}"
-    """
+def print_country_data(country_alpha):
+
+    country_str = ''
+
+    for c in country_alpha:
+        country_str += "'"+c+"',"
+
+    country_str = country_str[:-1]
+    print(country_str)
+
     query = f"""
-    SELECT f.country, wpc.gdp_per_cap, f.fertility as GDP FROM world_gdp_per_cap as wpc INNER JOIN world_fertility as f ON f.iso_code = wpc.iso_code WHERE f.iso_code='{country_alpha}'
+    SELECT f.country, wpc.gdp_per_cap, f.fertility as GDP FROM world_gdp_per_cap as wpc INNER JOIN world_fertility as f ON f.iso_code = wpc.iso_code WHERE f.iso_code IN ({country_str})
     """
 
     connection = question_setup()
     cursor = connection.cursor()
     cursor.execute(query)
     results = cursor.fetchall()
+    print(results)
+    print("IN COUNTRY DATA!")
 
     for r in results:
+        print("In print:")
         print(r)
