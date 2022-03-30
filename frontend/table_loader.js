@@ -17,12 +17,20 @@ async function loadIntoTable(inputURL, table, country, qid) {
 
     data = await response.json();
     console.log(data["headers"]);
-    const { headers, rows } = data
+    const { headers, rows, countries, theme, subtheme } = data
     console.log(headers)
 
     console.log("Came past Fetch")
+
+    const themeDiv = document.getElementById("question")
+    themeDiv.innerHTML = ""
+    const themeElement = document.createElement("h2")
+    themeElement.textContent = theme + ": " + subtheme
+    themeDiv.appendChild(themeElement)
+
+
     // Clear table data
-    tableHead.innerHTML = "<tr></tr>";
+    tableHead.innerHTML = "<tr><th>Country</th></tr>";
     tableBody.innerHTML = "<tr></tr>";
 
     for (const headerText of headers) {
@@ -31,12 +39,31 @@ async function loadIntoTable(inputURL, table, country, qid) {
         headerElement.textContent = headerText;
         tableHead.querySelector("tr").appendChild(headerElement)
     }
-    for (const cellText of rows) {
-        const cellElement = document.createElement("td")
-        cellElement.textContent = cellText;
-        tableBody.querySelector("tr").appendChild(cellElement)
+
+    let i = 0;
+
+    for (const row of rows) {
+        const rowElement = document.createElement("tr")
+        const country = document.createElement("td")
+        country.textContent = countries[i];
+        console.log(headers[i]);
+        i++;
+        rowElement.appendChild(country);
+
+        for (const cellText of row) {
+            const cellElement = document.createElement("td")
+            if (cellText < 2) {
+                cellElement.textContent = Math.round(cellText * 1000) / 10 + "%";
+            }
+            else {
+                cellElement.textContent = cellText;
+            }
+
+            rowElement.appendChild(cellElement);
+        }
+        tableBody.appendChild(rowElement);
     }
-    //tableBody.appendChild(cellElement)
+
 
 }
 
@@ -44,10 +71,11 @@ const form = document.getElementById('inputForm');
 
 form.addEventListener('submit', (event) => {
     // handle the form data
-    //console.log(event)
     event.preventDefault();
 
-    let country = form.elements['country'].value
+    let country_1 = form.elements['country_1'].value
+    let country_2 = form.elements['country_2'].value
+    let country = [country_1, country_2]
     console.log(country)
     let qid = form.elements['qid'].value
     console.log(qid)

@@ -17,12 +17,11 @@ CORS(app)
 def index():
     # try:
     print(request.args)
-    country = request.args.get('country')
+    country = request.args.get('country').split(',')
     print(country)
     qid = int(request.args.get('qid'))
     print(qid)
-    response = ask_question(qid, country)
-    country = [country]
+    response = ask_many_questions(qid, country)
     country_data = print_country_data(country)
     # except BaseException:
     #    country = 'IRQ'
@@ -67,55 +66,14 @@ def question_setup():
     return connection
 
 
-def ask_question(question_nr, country_alpha):
-    select_question_answers = f"""
-        SELECT "Q{question_nr}", COUNT("Q{question_nr}") FROM QUESTIONS WHERE "B_COUNTRY_ALPHA" = '{country_alpha}' GROUP BY "Q{question_nr}" ORDER BY "Q{question_nr}"
-    """
+def list_to_sql_string(country_alpha):
 
-    connection = question_setup()
-    cursor = connection.cursor()
-    cursor.execute(select_question_answers)
-    results = cursor.fetchall()
+    question_str = ""
+    for c in country_alpha:
+        print(c)
+        question_str += "'"+c+"',"
 
-    cols = ''
-    freq = []
-    for r in results:
-        cols += (answer_dict[str(r[0])])+','
-        freq.append(r[1])
-
-    # Calculate share
-    sum = 0
-    for opt in freq:
-        sum += int(opt)
-    freq = list(map(lambda a: round((a/sum), 4)*100, freq))
-
-    select_answers = f"""SELECT q,theme,subtheme,{cols[:-1]} FROM answers WHERE "q" = '{question_nr}.0'"""
-    select_columns = """SELECT column_name, ordinal_position FROM information_schema.columns WHERE table_name = 'answers'"""
-
-    def get_selection(query):
-        cursor = connection.cursor()
-        cursor.execute(query)
-        results = cursor.fetchall()
-
-        return results
-
-    question_details = get_selection(select_answers)[0]
-    freq = list(map(lambda a: str(round(a, 4))+"%", freq))  # add percentages, but string
-    data = [country_alpha, *list(question_details[0:3]), *freq, sum]
-
-    columns = [*["Country", "Question", "Theme", "Subtheme"], *question_details[3:], *["Answers"]]
-    df = pd.DataFrame([data], columns=columns)
-    if df["Subtheme"][0] == '0':
-        print("No subtheme!!!")
-        df.drop(labels="Subtheme", axis=1, inplace=True)
-
-    print(country_alpha)
-
-    print("hello")
-    response = {"headers": list(df.columns), "rows": list(df.iloc[0])}
-    response = str(response).replace("'", '"').replace('n"t', "n't")
-    print(type(response))
-    return str(response)
+    return question_str[:-1]
 
 
 def print_country_data(country_alpha):
@@ -142,3 +100,70 @@ def print_country_data(country_alpha):
     for r in results:
         print("In print:")
         print(r)
+
+
+def PSQL_execute(query):
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+    return results
+
+
+def ask_many_questions(question_nr, country_alpha):
+    connection = question_setup()
+
+    country_alpha = list_to_sql_string(country_alpha)
+
+    # Getting response frequencies
+    select_question_answers = f"""
+            SELECT "B_COUNTRY_ALPHA","Q{question_nr}", COUNT("Q{question_nr}") FROM QUESTIONS WHERE "B_COUNTRY_ALPHA" IN ({country_alpha}) GROUP BY "B_COUNTRY_ALPHA","Q{question_nr}" ORDER BY "B_COUNTRY_ALPHA"
+        """
+
+    results = PSQL_execute(select_question_answers)
+
+    res_df = pd.DataFrame()
+
+    for r in results:
+        country = r[0]
+        response_code = r[1]
+        resp_frequency = r[2]
+
+        res_df.loc[country, response_code] = resp_frequency
+
+    res_df.fillna(0, inplace=True)
+    res_df.sort_index(axis=1, inplace=True)
+
+    # Getting the answers
+
+    # Get the set of response_codes that were possible in the answers, can be different for different countries
+    nr_columns = list(set(map(lambda a: a[1], results)))
+
+    # Convert the numeric response codes in the answer to text response codes in database
+    text_columns = ",".join(list(map(lambda a: answer_dict[a], nr_columns)))
+
+    # Answers query
+    select_answers = f"""
+    SELECT q,theme,subtheme,{text_columns} FROM answers WHERE "q" = '{question_nr}.0' 
+    """
+    question_legend = PSQL_execute(select_answers)[0]
+
+    theme = question_legend[1]
+    subtheme = question_legend[2]
+    response_options = question_legend[3:]
+
+    resp_dict = {}
+    for i, response in enumerate(response_options):
+        resp_dict[nr_columns[i]] = response
+
+    res_df.rename(columns=resp_dict, inplace=True)
+
+    res_df['Answers'] = res_df.sum(axis=1)
+    res_df.iloc[:, :-1] = res_df.iloc[:, :-1].div(res_df['Answers'], axis=0).round(3)
+
+    # display(res_df)
+    res_dict = res_df.iloc[:, :].to_dict(orient='split')
+
+    response = {"question_nr": question_nr, "theme": theme, "subtheme": subtheme,
+                "headers": res_dict['columns'], "countries": res_dict['index'], "rows": res_dict['data']}
+    return json.dumps(response)
