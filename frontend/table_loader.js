@@ -67,17 +67,17 @@ async function loadIntoTable(inputURL, table, country, qid) {
 
 }
 
-const form = document.getElementById('inputForm');
+const form_1 = document.getElementById('inputForm_1');
 
-form.addEventListener('submit', (event) => {
+form_1.addEventListener('submit', (event) => {
     // handle the form data
     event.preventDefault();
 
-    let country_1 = form.elements['country_1'].value
-    let country_2 = form.elements['country_2'].value
+    let country_1 = form_1.elements['country_1'].value
+    let country_2 = form_1.elements['country_2'].value
     let country = [country_1, country_2]
     console.log(country)
-    let qid = form.elements['qid'].value
+    let qid = form_1.elements['qid'].value
     console.log(qid)
 
     //form.removeEventListener('submit')
@@ -85,3 +85,20 @@ form.addEventListener('submit', (event) => {
 
 });
 
+const form_2 = document.getElementById('inputForm_2');
+
+form_2.addEventListener('submit', (event) => {
+    // handle the form data
+    event.preventDefault();
+
+    let country = form_2.elements['country_1'].value
+    console.log(country)
+    let qid_1 = form_2.elements['qid_1'].value
+    let qid_2 = form_2.elements['qid_2'].value
+    let qid = [qid_1, qid_2]
+    console.log(qid)
+
+    //form.removeEventListener('submit')
+    loadIntoTable("http://127.0.0.1:5000/cross", document.querySelector("table"), country, qid);
+
+});

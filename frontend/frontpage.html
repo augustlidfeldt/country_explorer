@@ -7,8 +7,8 @@
   
   <body>
     <h1>Country Visualizer</h1>
-    <p>Please write a country</p>
-    <form id="inputForm">
+    <p>Compare views in two countries by selecting countries and question</p>
+    <form id="inputForm_1">
       <select id="country_1" name="country">
         <option value="IRQ">Iraq</option>
         <option value="JPN">Japan</option>
@@ -29,8 +29,28 @@
       <br><br>
       <input type="submit" value="Fetch">
     </form>
+    
+    <br></br>
+    <p>Compare views between different groups within a country selecting country and questions</p>
+    <form id="inputForm_2">
+      <select id="country_1" name="country">
+        <option value="IRQ">Iraq</option>
+        <option value="JPN">Japan</option>
+        <option value="USA">United States</option>
+        <option value="AUS">Australia</option>
+        </select>
 
+      <br><br>
+      <div id="question"></div>
+      <label for="qid" id="qid_label">Question number:</label>
+      <input type="number" id="qid_1" name="qid" min="1" max="200">
+      <label for="qid" id="qid_label">Question number:</label>
+      <input type="number" id="qid_2" name="qid" min="1" max="200">
+      <br><br>
+      <input type="submit" value="Fetch">
     </form>
+
+ 
     <table class="table">
         <thead></thead>
         <tbody></tbody>
