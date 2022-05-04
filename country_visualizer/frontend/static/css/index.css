@@ -1,4 +1,97 @@
-.App {
+body {
   margin: 1rem;
   font-family: Arial, Helvetica, sans-serif;
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.App {
+  margin-top: 5%;
+  font-size: larger;
+  width: 100%;
+  height: 100%;
+}
+
+#app {
+  font-size: larger;
+  width: 80%;
+  height: 100%;
+}
+
+#fact-table {
+  margin: 20px;
+  padding: 20px;
+}
+
+#maingrid {
+  height: 100%;
+  background-color: rgb(207, 159, 114);
+  width: 46%;
+  float: left;
+  margin: 2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+}
+
+.shadow {
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+}
+
+#id1 {
+  background-color: rgb(233, 225, 213);
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 2%;
+  margin-right: 2%;
+  border-radius: 20px;
+  padding: 5%;
+}
+
+#wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+#flag {
+  align-items: center;
+  width: 80%;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+#main-title {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
+  font-size: 50pt;
+  font-family: "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-weight: 600;
+}
+
+#sub-title {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+  padding-bottom: 40px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 100;
+  font-style: italic;
 }
